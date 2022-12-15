@@ -5,36 +5,33 @@ import com.example.hw_2_35.exceptions.EmployeeNotFoundExceptions;
 import com.example.hw_2_35.model.Employee;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final List<Employee> employeeList;
+    private final Map<String, Employee> employees;
 
-    public EmployeeServiceImpl() {
-        this.employeeList = new ArrayList<>();
+    public EmployeeServiceImpl() {this.employees = new HashMap<>();
+
     }
 
     @Override
     public Employee add(String fistName, String lastName) {
         Employee employee = new Employee(fistName, lastName);
-        if (employeeList.contains(employee)) {
+        if (employees.containsKey(employee.getFullName())) {
             throw new EmployeeAlreadyAddExceptions();
         }
-        employeeList.add(employee);
+        employees.put(employee.getFullName(), employee);
         return employee;
     }
 
     @Override
     public Employee remove(String fistName, String lastName) {
         Employee employee = new Employee(fistName, lastName);
-        if (employeeList.contains(employee)){
-            employeeList.remove(employee);
-            return employee;
+        if (employees.containsKey(employee.getFullName())){
+            return employees.remove(employee.getFullName());
+
         }
 throw new EmployeeNotFoundExceptions();
     }
@@ -43,13 +40,13 @@ throw new EmployeeNotFoundExceptions();
     public Employee find(String fistName, String lastName) {
         Employee employee = new Employee(fistName, lastName);
 
-        if (employeeList.contains(employee)) {
-            return employee;
+        if (employees.containsKey(employee.getFullName())) {
+            return employees.get(employee.getFullName());
         }
         throw new EmployeeNotFoundExceptions();
     }
     @Override
     public Collection<Employee> findAll() {
-        return Collections.unmodifiableList(employeeList);
+        return (Collection<Employee>) Collections.unmodifiableCollection(employees.values());
     }
 }
